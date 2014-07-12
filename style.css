@@ -1,0 +1,31 @@
+*{
+	margin: 0;
+	padding: 0;
+}
+body{text-align: center;}
+.container{padding-top: 50px;}
+#puzzle{
+	margin: 20px auto;
+	border: 1px solid #333;
+}
+#puzzle td{position: relative;width: 60px;;}
+#puzzle button{
+	position: relative;
+	font-size: 18px;
+	width: 60px;
+	height: 60px;
+	transition: ease-out 0.1s;
+}
+#puzzle button.up{
+	-webkit-transform: translate(0,-62px);
+}
+#puzzle button.down{
+	-webkit-transform: translate(0,62px);
+}
+#puzzle button.left{
+	-webkit-transform: translate(-62px,0);
+}
+#puzzle button.right{
+	-webkit-transform: translate(62px,0);
+}
+#refresh{font-size: 16px;}
