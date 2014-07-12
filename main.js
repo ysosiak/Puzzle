@@ -66,11 +66,17 @@ function renderPuzzle(){
 				td.classList.add('empty');
 			else{
 				button = document.createElement('button');
-				// button.classList.add('button');
+				button.setAttribute('draggable', true);
 				button.innerHTML = blocks[i][j];
 				button.addEventListener('click', function(e){
 					moveBlock(this)
 				})
+
+				button.addEventListener('drag', function(e){
+					// console.log('drag')
+				})
+				
+
 				button.addEventListener('webkitTransitionEnd', replaceBlock, false);
 
 				td.appendChild(button);
@@ -113,6 +119,32 @@ function saveData(){
 	window.localStorage.setItem('data', JSON.stringify(data));
 }
 
+function keyboardControl(e){
+	code = e.keyCode;
+	if (code == 37 || code == 38 || code == 39 || code == 40){
+		emptyCell = document.getElementsByClassName('empty')[0];
+		row = emptyCell.getAttribute('data-row-id');
+		column = emptyCell.getAttribute('data-column-id');
+		switch (code){
+			case 37:
+				column++;
+				break
+			case 38:
+				row++;
+				break
+			case 39:
+				column--;
+				break
+			case 40:
+				row--;
+				break
+		}
+		el = document.getElementById('r' + row + 'c' + column);
+		if (el)
+			moveBlock(el.childNodes[0]);
+	}
+}
+
 window.onload = function(){
 	data = window.localStorage.getItem('data');
 	size = window.localStorage.getItem('size');
@@ -127,7 +159,26 @@ window.onload = function(){
 
 	document.getElementById('refresh').addEventListener('click', refresh);
 	document.getElementById('size').addEventListener('input', changeSize);
+	document.addEventListener('keyup', keyboardControl);
+
+	emptyCell = document.getElementsByClassName('empty')[0]
+	emptyCell.addEventListener('drop', function(ev) {
+	    ev.preventDefault();
+	    // var test = ev.dataTransfer.getData("var");
+	    // console.log(test)
+	    // ev.target.appendChild(document.getElementById(data));
+	})
+
+	emptyCell.addEventListener('dragover', allowDrop)
 
 	sizeElement = document.getElementById('size');
 	sizeElement.value = window.localStorage.getItem('size') || 4;
+}
+
+function drop(e){
+	console.log(e)
+}
+
+function allowDrop(e){
+	 e.preventDefault();
 }
