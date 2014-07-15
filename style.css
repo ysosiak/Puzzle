@@ -5,27 +5,59 @@
 body{text-align: center;}
 .container{padding-top: 50px;}
 #puzzle{
+	padding: 2px;
 	margin: 20px auto;
-	border: 1px solid #333;
+	border: 1px solid #978EBD;
+	box-shadow: #999999 0px 0px 5px;
+	border-radius: 3px;
 }
-#puzzle td{position: relative;width: 60px;;}
+#puzzle td{
+	position: relative;width: 60px;
+	padding: 1px;
+}
 #puzzle button{
 	position: relative;
-	font-size: 18px;
+	font-size: 29px;
 	width: 60px;
 	height: 60px;
-	transition: ease-out 0.1s;
+	transition: 0.5s;
+	background: #9090A3;
+	border: none;
+	border-radius: 2px;
+	color: #FFFFFF;
+	box-shadow: 0px 0px 2px #78D3A0;
+	text-shadow: #4B4A44 1px 1px 1px;;
 }
+#puzzle button:focus{outline: none;}
 #puzzle button.up{
-	-webkit-transform: translate(0,-62px);
+	-webkit-animation: up 0.3s;
+
 }
 #puzzle button.down{
-	-webkit-transform: translate(0,62px);
+	-webkit-animation: down 0.3s;
 }
 #puzzle button.left{
-	-webkit-transform: translate(-62px,0);
+	-webkit-animation: left 0.3s;
 }
 #puzzle button.right{
-	-webkit-transform: translate(62px,0);
+	-webkit-animation: right 0.3s;
 }
 #refresh{font-size: 16px;}
+
+@-webkit-keyframes up {
+    from {-webkit-transform: translate(0,62px)}
+}
+@-webkit-keyframes down {
+    from {-webkit-transform: translate(0,-62px)}
+}
+@-webkit-keyframes left {
+    from {-webkit-transform: translate(62px,0)}
+}
+@-webkit-keyframes right {
+    from {-webkit-transform: translate(-62px,0)}
+}
+button{cursor: pointer;}
+#puzzle tr:first-child button{
+	color: #FFF;
+	background: rgba(144, 219, 159, 0.86);
+}

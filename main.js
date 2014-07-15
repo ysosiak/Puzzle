@@ -5,11 +5,16 @@ function moveBlock(button){
 	block_column = block.getAttribute('data-column-id');
 	// console.log(block_row + '_' + block_column)
 
+	block_index = (parseInt(block_row) - 1) * size + parseInt(block_column) - 1;
+	// console.log(data[block_index]);
 
 	emptyCell = document.getElementsByClassName('empty')[0];
 	emptyCell_row = emptyCell.getAttribute('data-row-id');
 	emptyCell_column = emptyCell.getAttribute('data-column-id');
 	// console.log(emptyCell_row + '_' + emptyCell_column)
+
+	empty_index = (parseInt(emptyCell_row) - 1) * size + parseInt(emptyCell_column) - 1;
+	// console.log(data[empty_index]);
 
 	direction = false;
 	if (block_row == emptyCell_row){
@@ -28,23 +33,48 @@ function moveBlock(button){
 	}
 
 	if (direction){
-		button.classList.add(direction);
-	}
+		tmp = data[block_index];
+		data[block_index] = data[empty_index];
+		data[empty_index] = tmp;
+		saveData();
 
-}
+		window.localStorage.setItem('moves', ++moves);
+		updateMoves();
 
-function replaceBlock(e){
-	if (e.propertyName == '-webkit-transform'){
-		button = e.target;
-		td = button.parentNode;
-		emptyCell = document.getElementsByClassName('empty')[0];
 		emptyCell.appendChild(button);
 		button.className = '';
+		button.classList.add(direction);
 		emptyCell.classList.remove('empty');
-		td.classList.add('empty');
+		block.classList.add('empty');
+
+		// console.log(JSON.stringify(data))
+		// sorted = data;
+		var sorted = data.slice();
+		sorted.sort(function(a,b){return a-b});
+		sorted.splice(0,1);
+		sorted.push(null);
+		console.log(sorted);
+		if (JSON.stringify(data) == JSON.stringify(sorted)){
+			alert('Success')
+		}
+		// console.log(JSON.stringify())
 	}
+
 }
 
+/*function replaceBlock(e){
+	e.target.className = '';
+	// console.log(e)
+	if (e.type == 'webkitAnimationEnd'){
+		// button = e.target;
+		// td = button.parentNode;
+		// emptyCell = document.getElementsByClassName('empty')[0];
+		// emptyCell.appendChild(button);
+		// emptyCell.classList.remove('empty');
+		// td.classList.add('empty');
+	}
+}
+*/
 function renderPuzzle(){
 	var table = document.getElementById("puzzle");
 	table.innerHTML = '';
@@ -66,7 +96,7 @@ function renderPuzzle(){
 				td.classList.add('empty');
 			else{
 				button = document.createElement('button');
-				button.setAttribute('draggable', true);
+				// button.setAttribute('draggable', true);
 				button.innerHTML = blocks[i][j];
 				button.addEventListener('click', function(e){
 					moveBlock(this)
@@ -75,46 +105,57 @@ function renderPuzzle(){
 				button.addEventListener('drag', function(e){
 					// console.log('drag')
 				})
-				
 
-				button.addEventListener('webkitTransitionEnd', replaceBlock, false);
+				button.addEventListener('webkitAnimationEnd', function(e){
+					// e.target.className = '';
+					e.target.classList.remove(e.animationName);
+				}, false);
 
 				td.appendChild(button);
 			}
 
 			tr.appendChild(td);
 		};
-		
+
 		table.appendChild(tr);
 	};
 }
 
 var data = [],
-	size = 4;
+	size = 4,
+	moves = 0;
 function refresh(e){
-	data = [];	
+	sizeElement = document.getElementById('size');
+	size = parseInt(sizeElement.value);
+	if (size < 3 || isNaN(size))
+		size = 4;
+	window.localStorage.setItem('size', size)
+
+	data = [];
 	for (var i = null; i < size * size; i++) {
 		data.push(i)
 	};
 
-	console.log(data)
 	data.sort(function() {
 	  return .5 - Math.random();
 	});
 
-	saveData();
+	moves = 0;
+	window.localStorage.setItem('moves', moves);
 
+	updateMoves();
+	saveData();
 	renderPuzzle();
 }
 
-function changeSize(e){
+/*function changeSize(e){
 	size = parseInt(e.target.value);
 	if (size < 3 || isNaN(size))
 		size = 4;
 	window.localStorage.setItem('size', size)
-	
-}
 
+}
+*/
 function saveData(){
 	window.localStorage.setItem('data', JSON.stringify(data));
 }
@@ -139,46 +180,50 @@ function keyboardControl(e){
 				row--;
 				break
 		}
-		el = document.getElementById('r' + row + 'c' + column);
-		if (el)
-			moveBlock(el.childNodes[0]);
+		block = document.getElementById('r' + row + 'c' + column);
+		if (block)
+			moveBlock(block.childNodes[0]);
 	}
+}
+
+function updateMoves(){
+	document.getElementById('moves').innerHTML = moves;
 }
 
 window.onload = function(){
 	data = window.localStorage.getItem('data');
 	size = window.localStorage.getItem('size');
+	moves = window.localStorage.getItem('moves');
+
 	if (!size)
 		size = 4;
-	if (!data)
+	if (!data){
 		refresh();
-	else{
+		moves = 0;
+	}else{
+		if (isNaN(moves))
+			moves = 0;
 		data = JSON.parse(data);
 		renderPuzzle();
 	}
 
-	document.getElementById('refresh').addEventListener('click', refresh);
-	document.getElementById('size').addEventListener('input', changeSize);
+	updateMoves();
+
+	document.getElementById('refresh').addEventListener('click', function(){
+		if (confirm("Are you sure?"))
+			refresh();
+	});
+	// document.getElementById('size').addEventListener('input', changeSize);
 	document.addEventListener('keyup', keyboardControl);
 
-	emptyCell = document.getElementsByClassName('empty')[0]
+	/*emptyCell = document.getElementsByClassName('empty')[0]
 	emptyCell.addEventListener('drop', function(ev) {
 	    ev.preventDefault();
-	    // var test = ev.dataTransfer.getData("var");
-	    // console.log(test)
-	    // ev.target.appendChild(document.getElementById(data));
 	})
-
-	emptyCell.addEventListener('dragover', allowDrop)
+	emptyCell.addEventListener('dragover', function(e){
+		e.preventDefault();
+	})*/
 
 	sizeElement = document.getElementById('size');
 	sizeElement.value = window.localStorage.getItem('size') || 4;
-}
-
-function drop(e){
-	console.log(e)
-}
-
-function allowDrop(e){
-	 e.preventDefault();
 }
