@@ -53,7 +53,6 @@ function moveBlock(button){
 		sorted.sort(function(a,b){return a-b});
 		sorted.splice(0,1);
 		sorted.push(null);
-		console.log(sorted);
 		if (JSON.stringify(data) == JSON.stringify(sorted)){
 			alert('Success')
 		}
@@ -131,6 +130,8 @@ function refresh(e){
 		size = 4;
 	window.localStorage.setItem('size', size)
 
+	refreshTimer();
+
 	data = [];
 	for (var i = null; i < size * size; i++) {
 		data.push(i)
@@ -184,6 +185,8 @@ function keyboardControl(e){
 		if (block)
 			moveBlock(block.childNodes[0]);
 	}
+
+	return false;
 }
 
 function updateMoves(){
@@ -214,7 +217,7 @@ window.onload = function(){
 			refresh();
 	});
 	// document.getElementById('size').addEventListener('input', changeSize);
-	document.addEventListener('keyup', keyboardControl);
+	document.addEventListener('keydown', keyboardControl);
 
 	/*emptyCell = document.getElementsByClassName('empty')[0]
 	emptyCell.addEventListener('drop', function(ev) {
@@ -226,4 +229,44 @@ window.onload = function(){
 
 	sizeElement = document.getElementById('size');
 	sizeElement.value = window.localStorage.getItem('size') || 4;
+	startTimer();
+	timer_element = document.getElementById("timer");
+	// incrementTimer();
+}
+
+window.onfocusLost = function(){
+	console.log("onfocuslost")
+}
+
+function incrementTimer(){
+	elapsed_time++;
+	localStorage.setItem("elapsed_time", elapsed_time);
+
+	var seconds = elapsed_time % 60;
+	var minutes = Math.floor(elapsed_time / 60);
+	var hours = Math.floor(minutes / 60);
+	minutes = minutes % 60;
+
+	hours = hours < 10 ? '0' + hours: hours;
+	minutes = minutes < 10 ? '0' + minutes: minutes;
+	seconds = seconds < 10 ? '0' + seconds: seconds;
+
+	timer_element.innerHTML = hours + ':' + minutes + ':' + seconds;
+}
+
+function startTimer(){
+	elapsed_time = localStorage.getItem("elapsed_time");
+	if (!elapsed_time)
+		elapsed_time = 0;
+
+	timer_id = setInterval(incrementTimer,1000);
+}
+
+function stopTimer(){
+	clearInterval(timer_id);
+	alert(elapsed_time + ' seconds')
+}
+
+function refreshTimer(){
+	elapsed_time = 0;
 }

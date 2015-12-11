@@ -57,7 +57,3 @@ body{text-align: center;}
     from {-webkit-transform: translate(-62px,0)}
 }
 button{cursor: pointer;}
-#puzzle tr:first-child button{
-	color: #FFF;
-	background: rgba(144, 219, 159, 0.86);
-}
