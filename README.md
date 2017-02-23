@@ -1,4 +1,4 @@
 # Puzzle
-Demo http://yura215.github.io/Puzzle/
+Demo http://ysosiak.github.io/Puzzle/
 
-<a href="http://yura215.github.io/Puzzle/"><image src="http://i.imgur.com/ND7RMQc.png"></a>
+<a href="http://ysosiak.github.io/Puzzle/"><image src="http://i.imgur.com/ND7RMQc.png"></a>
